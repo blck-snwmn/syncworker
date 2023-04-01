@@ -24,14 +24,16 @@ func main() {
 	defer conn.Close()
 
 	go func() {
-		// メッセージを受信します。
-		_, receivedMessage, err := conn.ReadMessage()
-		if err != nil {
-			log.Fatal("Failed to receive message:", err)
-		}
+		for {
+			// メッセージを受信します。
+			_, receivedMessage, err := conn.ReadMessage()
+			if err != nil {
+				log.Fatal("Failed to receive message:", err)
+			}
 
-		// 受信したメッセージを出力します。
-		fmt.Printf("Received message: %s\n", receivedMessage)
+			// 受信したメッセージを出力します。
+			fmt.Printf("Received message: %s\n", receivedMessage)
+		}
 	}()
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
