@@ -1,0 +1,29 @@
+name: Go lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  golint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: blck-snwmn/share-workflows/go/setup@main
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: --enable=gosec
+  eslint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: syncworker
+    steps:
+      - uses: actions/checkout@v3
+      - uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
