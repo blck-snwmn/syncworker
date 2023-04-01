@@ -17,7 +17,7 @@ export default {
   async fetch(
     request: Request,
     env: Env,
-    ctx: ExecutionContext,
+    // ctx: ExecutionContext,
   ): Promise<Response> {
     const url = new URL(request.url);
     const ps = url.pathname.split("/");
