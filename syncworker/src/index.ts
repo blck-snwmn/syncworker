@@ -65,6 +65,10 @@ export class Room {
 			}
 		});
 
+		server.addEventListener('close', async event => {
+			console.log(`close:${event}`)
+		});
+
 		return new Response(null, {
 			status: 101,
 			webSocket: client,
