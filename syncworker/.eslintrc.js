@@ -24,5 +24,6 @@ module.exports = {
     "@typescript-eslint/quotes": ["error", "double"],
 
     "no-console": "off",
+    "@typescript-eslint/require-await": "off",
   },
 };
