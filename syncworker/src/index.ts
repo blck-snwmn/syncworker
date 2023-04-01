@@ -28,6 +28,24 @@ export default {
 		env: Env,
 		ctx: ExecutionContext
 	): Promise<Response> {
-		return new Response("Hello World!");
+		const upgradeHeader = request.headers.get('Upgrade');
+		if (!upgradeHeader || upgradeHeader !== 'websocket') {
+			return new Response('Expected Upgrade: websocket', { status: 426 });
+		}
+
+		const webSocketPair = new WebSocketPair();
+		const client = webSocketPair[0]
+		const server = webSocketPair[1];
+
+		server.accept();
+		server.addEventListener('message', event => {
+			console.log(event.data);
+			server.send("Hello from Cloudflare Workers! You said: " + event.data)
+		});
+
+		return new Response(null, {
+			status: 101,
+			webSocket: client,
+		});
 	},
 };
