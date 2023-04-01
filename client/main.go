@@ -9,6 +9,32 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type position struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+type positionMessage struct {
+	Type string `json:"type"`
+	position
+}
+
+func (p positionMessage) JsonBytes() []byte {
+	return []byte(fmt.Sprintf(`{"type": "position", "x": %d, "y": %d}`, p.X, p.Y))
+}
+
+type chatMessage struct {
+	Type string `json:"type"`
+	Msg  string `json:"msg"`
+}
+
+func (c chatMessage) JsonBytes() []byte {
+	return []byte(fmt.Sprintf(`{"type": "chat", "msg": "%s"}`, c.Msg))
+}
+
+type message interface {
+	JsonBytes() []byte
+}
+
 func main() {
 	// WebSocket接続先のURLを指定します。
 	url := "ws://localhost:8787"
@@ -36,13 +62,37 @@ func main() {
 		}
 	}()
 	scanner := bufio.NewScanner(os.Stdin)
+
+	currentPos := position{X: 0, Y: 0}
 	for {
 		scanner.Scan()
-		// メッセージを送信します。
-		message := scanner.Text()
-		err = conn.WriteMessage(websocket.TextMessage, []byte(message))
+
+		var message message
+		switch msg := scanner.Text(); msg {
+		case "w", "a", "s", "d":
+			currentPos = move(msg, currentPos)
+			message = positionMessage{Type: "position", position: currentPos}
+		default:
+			message = chatMessage{Type: "chat", Msg: msg}
+		}
+		err = conn.WriteMessage(websocket.TextMessage, message.JsonBytes())
 		if err != nil {
 			log.Fatal("Failed to send message:", err)
 		}
+	}
+}
+
+func move(key string, pos position) position {
+	switch key {
+	case "w":
+		return position{X: pos.X, Y: pos.Y - 1}
+	case "a":
+		return position{X: pos.X - 1, Y: pos.Y}
+	case "s":
+		return position{X: pos.X, Y: pos.Y + 1}
+	case "d":
+		return position{X: pos.X + 1, Y: pos.Y}
+	default:
+		return pos
 	}
 }
