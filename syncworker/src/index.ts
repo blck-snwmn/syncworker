@@ -17,7 +17,7 @@ export default {
   async fetch(
     request: Request,
     env: Env,
-    ctx: ExecutionContext,
+    // ctx: ExecutionContext,
   ): Promise<Response> {
     const url = new URL(request.url);
     const ps = url.pathname.split("/");
@@ -32,20 +32,20 @@ export default {
   },
 };
 
-interface position {
+interface Position {
   type: "position";
   x: number
   y: number
 }
 
-interface chat {
+interface Chat {
   type: "chat";
   msg: string
 }
 
-type message = position | chat;
+type Message = Position | Chat;
 
-interface session {
+interface Session {
   uid: string
   ws: WebSocket
 }
@@ -53,7 +53,7 @@ interface session {
 export class Room {
   state: DurableObjectState;
 
-  sessions: session[] = [];
+  sessions: Session[] = [];
 
   env: Env;
 
@@ -80,7 +80,7 @@ export class Room {
     server.accept();
     this.sessions.push({ uid, ws: server });
 
-    server.addEventListener("message", async (event) => {
+    server.addEventListener("message", (event) => {
       try {
         this.broadcast(uid, event.data as string);
       } catch (error) {
@@ -88,8 +88,8 @@ export class Room {
       }
     });
 
-    server.addEventListener("close", async (event) => {
-      console.log(`close:${event}`);
+    server.addEventListener("close", () => {
+      console.log("close");
     });
 
     return new Response(null, {
@@ -99,7 +99,7 @@ export class Room {
   }
 
   broadcast(uid: string, message: string) {
-    const obj = JSON.parse(message);
+    const obj = JSON.parse(message) as Message;
     const resp = { uid, ...obj };
 
     // if (obj.type === 'chat') {
@@ -107,6 +107,6 @@ export class Room {
 
     // }
     console.log(message);
-    this.sessions.filter((s) => s.uid != uid).forEach((s) => s.ws.send(JSON.stringify(resp)));
+    this.sessions.filter((s) => s.uid !== uid).forEach((s) => s.ws.send(JSON.stringify(resp)));
   }
 }
