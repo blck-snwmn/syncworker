@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// WebSocket接続先のURLを指定します。
-	url := "ws://localhost:8787"
+	url := "ws://localhost:8787/increment"
 
 	// WebSocketのダイアル設定を作成します。
 	dialer := &websocket.Dialer{}

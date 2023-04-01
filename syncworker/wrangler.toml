@@ -1,3 +1,6 @@
 name = "syncworker"
 main = "src/index.ts"
 compatibility_date = "2023-04-01"
+
+[durable_objects]
+bindings = [{name = "ROOM", class_name = "Room"}]
