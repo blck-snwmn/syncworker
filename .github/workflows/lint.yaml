@@ -7,9 +7,6 @@ on:
 jobs:
   golint:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./client
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -19,11 +16,9 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           args: --enable=gosec
+          working-directory: ./client
   eslint:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./syncworker
     steps:
       - uses: actions/checkout@v3
       - uses: reviewdog/action-eslint@v1
