@@ -53,13 +53,7 @@ export class Room {
 
 		server.addEventListener('message', async event => {
 			try {
-				let value: number = await this.state.storage?.get("value") || 0
-				value++
-				await this.state.storage?.put("value", value);
-
-				console.log(event.data);
-				const mst = "Hello from Cloudflare Workers! You said: " + event.data + ":" + value
-				this.sessions.forEach(s => s.send(mst))
+				this.broadcast(event.data as string)
 			} catch (error) {
 				console.log(error)
 			}
@@ -74,4 +68,15 @@ export class Room {
 			webSocket: client,
 		});
 	}
+
+	broadcast(message: string) {
+		// const obj = JSON.parse(message) as message;
+		// if (obj.type === 'chat') {
+		// } else if (obj.type === 'position') {
+
+		// }
+		console.log(message)
+		this.sessions.forEach(s => s.send(message))
+	}
+
 }
