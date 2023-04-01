@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -46,7 +47,7 @@ func main() {
 	dialer := &websocket.Dialer{}
 
 	// WebSocket接続を開始します。
-	conn, _, err := dialer.Dial(url, nil)
+	conn, _, err := dialer.DialContext(context.Background(), url, nil)
 	if err != nil {
 		log.Fatal("Failed to connect to WebSocket server:", err)
 	}
