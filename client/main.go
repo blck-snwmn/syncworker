@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -36,8 +37,10 @@ type message interface {
 }
 
 func main() {
+	roomID := "myroom2"
+	uid := uuid.NewString()
 	// WebSocket接続先のURLを指定します。
-	url := "ws://localhost:8787"
+	url := fmt.Sprintf("ws://localhost:8787/room/%s/?id=%s", roomID, uid)
 
 	// WebSocketのダイアル設定を作成します。
 	dialer := &websocket.Dialer{}

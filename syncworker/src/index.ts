@@ -19,7 +19,13 @@ export default {
 		env: Env,
 		ctx: ExecutionContext
 	): Promise<Response> {
-		const id = env.ROOM.idFromName("room")
+		const url = new URL(request.url);
+		const ps = url.pathname.split('/')
+		if (ps.length !== 4 || ps[1] !== 'room') {
+			return new Response('Expected /room/:id', { status: 400 });
+		}
+		const roomID = ps[2]
+		const id = env.ROOM.idFromName(roomID)
 		const obj = env.ROOM.get(id)
 
 		return obj.fetch(request)
@@ -27,10 +33,27 @@ export default {
 };
 
 
+interface position {
+	type: 'position';
+	x: number
+	y: number
+}
+
+interface chat {
+	type: 'chat';
+	msg: string
+}
+
+type message = position | chat
+
+interface session {
+	uid: string
+	ws: WebSocket
+}
 
 export class Room {
 	state: DurableObjectState
-	sessions: WebSocket[] = []
+	sessions: session[] = []
 	env: Env
 
 	constructor(state: DurableObjectState, env: Env) {
@@ -44,16 +67,22 @@ export class Room {
 			return new Response('Expected Upgrade: websocket', { status: 426 });
 		}
 
+		const url = new URL(request.url);
+		const uid = url.searchParams.get('id')
+		if (uid === null) {
+			return new Response('Expected ?id=xxx', { status: 400 });
+		}
+
 		const webSocketPair = new WebSocketPair();
 		const { 0: client, 1: server } = webSocketPair
 
 
 		server.accept();
-		this.sessions.push(server)
+		this.sessions.push({ uid, ws: server })
 
 		server.addEventListener('message', async event => {
 			try {
-				this.broadcast(event.data as string)
+				this.broadcast(uid, event.data as string)
 			} catch (error) {
 				console.log(error)
 			}
@@ -69,14 +98,16 @@ export class Room {
 		});
 	}
 
-	broadcast(message: string) {
-		// const obj = JSON.parse(message) as message;
+	broadcast(uid: string, message: string) {
+		const obj = JSON.parse(message);
+		const resp = { uid, ...obj }
+
 		// if (obj.type === 'chat') {
 		// } else if (obj.type === 'position') {
 
 		// }
 		console.log(message)
-		this.sessions.forEach(s => s.send(message))
+		this.sessions.filter(s => s.uid != uid).forEach(s => s.ws.send(JSON.stringify(resp)))
 	}
 
 }
