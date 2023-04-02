@@ -98,7 +98,7 @@ export class Room {
 
     const iid = setInterval(() => {
       try {
-        this.broadcastPosition();
+        server.send(JSON.stringify(this.positions));
       } catch (error) {
         console.log(error);
       }
@@ -132,14 +132,5 @@ export class Room {
 
   storePosition(uid: string, position: Position) {
     this.positions[uid] = position;
-  }
-
-  broadcastPosition() {
-    if (this.sessions.length <= 1) {
-      return;
-    }
-    this.sessions
-      .filter((s) => !s.closed)
-      .forEach((s) => s.ws.send(JSON.stringify(this.positions)));
   }
 }
