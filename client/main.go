@@ -53,18 +53,8 @@ func main() {
 	}
 	defer conn.Close()
 
-	go func() {
-		for {
-			// メッセージを受信します。
-			_, receivedMessage, err := conn.ReadMessage()
-			if err != nil {
-				log.Fatal("Failed to receive message:", err)
-			}
+	go readMsg(conn)
 
-			// 受信したメッセージを出力します。
-			fmt.Printf("Received message: %s\n", receivedMessage)
-		}
-	}()
 	scanner := bufio.NewScanner(os.Stdin)
 
 	currentPos := position{X: 0, Y: 0}
@@ -98,5 +88,18 @@ func move(key string, pos position) position {
 		return position{X: pos.X + 1, Y: pos.Y}
 	default:
 		return pos
+	}
+}
+
+func readMsg(conn *websocket.Conn) {
+	for {
+		// メッセージを受信します。
+		_, receivedMessage, err := conn.ReadMessage()
+		if err != nil {
+			log.Fatal("Failed to receive message:", err)
+		}
+
+		// 受信したメッセージを出力します。
+		fmt.Printf("[received] %s\n", receivedMessage)
 	}
 }
