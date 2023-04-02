@@ -92,11 +92,14 @@ export class Room {
       }
     });
 
-    server.addEventListener("close", () => {
+    const f = () => {
       console.log("close");
       session.closed = true;
       this.sessions = this.sessions.filter((s) => s.uid !== uid);
-    });
+    };
+
+    server.addEventListener("close", f);
+    server.addEventListener("error", f);
 
     return new Response(null, {
       status: 101,
