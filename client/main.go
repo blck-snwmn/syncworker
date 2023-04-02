@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"log"
-	"math/rand"
+	"math/big"
+	"strconv"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -40,14 +41,20 @@ type message interface {
 func main() {
 	roomID := "myroom"
 	for i := 0; i < 200; i++ {
-		time.Sleep(time.Second)
-		go do(roomID, uuid.NewString())
+		go do(roomID, strconv.Itoa(i))
 	}
 	select {}
 }
 
+var (
+	maxX = big.NewInt(100)
+	maxY = maxX
+	maxM = big.NewInt(4)
+)
+
 func do(roomID, uid string) {
-	r := rand.New(rand.NewSource(time.Now().Unix()))
+	x, _ := rand.Int(rand.Reader, maxX)
+	y, _ := rand.Int(rand.Reader, maxY)
 
 	// WebSocket接続先のURLを指定します。
 	url := fmt.Sprintf("ws://localhost:8787/room/%s?id=%s", roomID, uid)
@@ -66,14 +73,16 @@ func do(roomID, uid string) {
 
 	// scanner := bufio.NewScanner(os.Stdin)
 
-	currentPos := position{X: r.Intn(100), Y: r.Intn(100)}
+	currentPos := position{X: int(x.Int64()), Y: int(y.Int64())}
+
 	const movestr = "wasd"
 	for {
+		m, _ := rand.Int(rand.Reader, maxM)
 		// time.Sleep(125 * time.Millisecond)
 		time.Sleep(time.Second)
 		// scanner.Scan()
 		// msg := scanner.Text();
-		msg := string(movestr[r.Intn(4)])
+		msg := string(movestr[m.Int64()])
 		var message message
 		switch msg {
 		case "w", "a", "s", "d":
