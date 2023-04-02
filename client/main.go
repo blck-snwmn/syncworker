@@ -39,10 +39,16 @@ type message interface {
 
 func main() {
 	roomID := "myroom"
+	for i := 0; i < 200; i++ {
+		time.Sleep(time.Second)
+		go do(roomID, uuid.NewString())
+	}
+	select {}
+}
 
+func do(roomID, uid string) {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
-	uid := uuid.NewString()
 	// WebSocket接続先のURLを指定します。
 	url := fmt.Sprintf("ws://localhost:8787/room/%s?id=%s", roomID, uid)
 
@@ -60,10 +66,11 @@ func main() {
 
 	// scanner := bufio.NewScanner(os.Stdin)
 
-	currentPos := position{X: 0, Y: 0}
+	currentPos := position{X: r.Intn(100), Y: r.Intn(100)}
 	const movestr = "wasd"
 	for {
-		time.Sleep(100 * time.Millisecond)
+		// time.Sleep(125 * time.Millisecond)
+		time.Sleep(time.Second)
 		// scanner.Scan()
 		// msg := scanner.Text();
 		msg := string(movestr[r.Intn(4)])
