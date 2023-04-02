@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WebSocket Example</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="1000" height="1000"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const socket = new WebSocket('ws://localhost:8787/room/myroom?id=5fcec763-fa11-41bb-9822-37fde7df4646');
+        const points = {};
+
+        // update loop
+        setInterval(() => {
+            // clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // draw points
+            for (const uid in points) {
+                const point = points[uid];
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 2, 0, 2 * Math.PI);
+                ctx.fillStyle = '#000000';
+                ctx.fill();
+            }
+        }, 1000 / 60); // 60FPS
+
+        socket.addEventListener('message', function (event) {
+            const data = JSON.parse(event.data);
+            const uid = data.uid;
+            const x = data.x + 500;
+            const y = data.y + 500;
+
+            if (points[uid]) {
+                // update existing point
+                points[uid].x = x;
+                points[uid].y = y;
+            } else {
+                // create new point
+                points[uid] = { x, y };
+            }
+        });
+    </script>
+</body>
+
+</html>
