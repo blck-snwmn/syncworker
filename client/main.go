@@ -93,7 +93,7 @@ func do(roomID, uid string) {
 		}
 		err = conn.WriteMessage(websocket.TextMessage, message.JsonBytes())
 		if err != nil {
-			log.Fatal("Failed to send message:", err)
+			log.Println("Failed to send message:", err)
 		}
 	}
 }
@@ -116,12 +116,13 @@ func move(key string, pos position) position {
 func readMsg(conn *websocket.Conn) {
 	for {
 		// メッセージを受信します。
-		_, receivedMessage, err := conn.ReadMessage()
+		_, _, err := conn.ReadMessage()
 		if err != nil {
-			log.Fatal("Failed to receive message:", err)
+			log.Println("Failed to receive message:", err)
+			return
 		}
 
 		// 受信したメッセージを出力します。
-		fmt.Printf("[received] %s\n", receivedMessage)
+		// fmt.Printf("[received] %s\n", receivedMessage)
 	}
 }
