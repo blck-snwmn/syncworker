@@ -56,6 +56,8 @@ export class Room {
 
   sessions: Session[] = [];
 
+  positions: Record<string, Position> = {};
+
   env: Env;
 
   constructor(state: DurableObjectState, env: Env) {
@@ -85,17 +87,29 @@ export class Room {
     console.log(`connections=${this.sessions.length}`);
 
     server.addEventListener("message", (event) => {
+      if (typeof event.data !== "string") {
+        return;
+      }
+      const obj = JSON.parse(event.data) as Message;
+      if (obj.type === "position") {
+        this.storePosition(uid, obj);
+      }
+    });
+
+    const iid = setInterval(() => {
       try {
-        this.broadcast(uid, event.data as string);
+        this.broadcastPosition();
       } catch (error) {
         console.log(error);
       }
-    });
+    }, 1000 / 10);
 
     const f = () => {
       console.log("close");
       session.closed = true;
       this.sessions = this.sessions.filter((s) => s.uid !== uid);
+      delete this.positions[uid];
+      clearInterval(iid);
     };
 
     server.addEventListener("close", f);
@@ -114,5 +128,18 @@ export class Room {
       .filter((s) => !s.closed)
       .filter((s) => s.uid !== uid)
       .forEach((s) => s.ws.send(JSON.stringify(resp)));
+  }
+
+  storePosition(uid: string, position: Position) {
+    this.positions[uid] = position;
+  }
+
+  broadcastPosition() {
+    if (this.sessions.length <= 1) {
+      return;
+    }
+    this.sessions
+      .filter((s) => !s.closed)
+      .forEach((s) => s.ws.send(JSON.stringify(this.positions)));
   }
 }

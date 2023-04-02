@@ -30,18 +30,20 @@
 
         socket.addEventListener('message', function (event) {
             const data = JSON.parse(event.data);
-            const uid = data.uid;
-            const x = data.x + 500;
-            const y = data.y + 500;
+            Object.keys(data).forEach(function (key) {
+                const uid = key;
+                const x = data[key].x + 500;
+                const y = data[key].y + 500;
 
-            if (points[uid]) {
-                // update existing point
-                points[uid].x = x;
-                points[uid].y = y;
-            } else {
-                // create new point
-                points[uid] = { x, y };
-            }
+                if (points[uid]) {
+                    // update existing point
+                    points[uid].x = x;
+                    points[uid].y = y;
+                } else {
+                    // create new point
+                    points[uid] = { x, y };
+                }
+            });
         });
     </script>
 </body>
