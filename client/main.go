@@ -86,7 +86,9 @@ func do(roomID, uid string) {
 		var message message
 		switch msg {
 		case "w", "a", "s", "d":
-			currentPos = move(msg, currentPos)
+			for i := 0; i < 5; i++ {
+				currentPos = move(msg, currentPos)
+			}
 			message = positionMessage{Type: "position", position: currentPos}
 		default:
 			message = chatMessage{Type: "chat", Msg: msg}
