@@ -48,6 +48,7 @@ type Message = Position | Chat;
 interface Session {
   uid: string
   ws: WebSocket
+  closed: boolean
 }
 
 export class Room {
@@ -78,7 +79,10 @@ export class Room {
     const { 0: client, 1: server } = webSocketPair;
 
     server.accept();
-    this.sessions.push({ uid, ws: server });
+    const session = { uid, ws: server, closed: false };
+    this.sessions.push(session);
+
+    console.log(`connections=${this.sessions.length}`);
 
     server.addEventListener("message", (event) => {
       try {
@@ -90,6 +94,8 @@ export class Room {
 
     server.addEventListener("close", () => {
       console.log("close");
+      session.closed = true;
+      this.sessions = this.sessions.filter((s) => s.uid !== uid);
     });
 
     return new Response(null, {
@@ -101,12 +107,9 @@ export class Room {
   broadcast(uid: string, message: string) {
     const obj = JSON.parse(message) as Message;
     const resp = { uid, ...obj };
-
-    // if (obj.type === 'chat') {
-    // } else if (obj.type === 'position') {
-
-    // }
-    // console.log(resp);
-    this.sessions.filter((s) => s.uid !== uid).forEach((s) => s.ws.send(JSON.stringify(resp)));
+    this.sessions
+      .filter((s) => !s.closed)
+      .filter((s) => s.uid !== uid)
+      .forEach((s) => s.ws.send(JSON.stringify(resp)));
   }
 }
