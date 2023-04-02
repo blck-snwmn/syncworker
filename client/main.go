@@ -1,11 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"log"
-	"os"
+	"math/rand"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -39,6 +39,9 @@ type message interface {
 
 func main() {
 	roomID := "myroom"
+
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+
 	uid := uuid.NewString()
 	// WebSocket接続先のURLを指定します。
 	url := fmt.Sprintf("ws://localhost:8787/room/%s?id=%s", roomID, uid)
@@ -55,14 +58,17 @@ func main() {
 
 	go readMsg(conn)
 
-	scanner := bufio.NewScanner(os.Stdin)
+	// scanner := bufio.NewScanner(os.Stdin)
 
 	currentPos := position{X: 0, Y: 0}
+	const movestr = "wasd"
 	for {
-		scanner.Scan()
-
+		time.Sleep(100 * time.Millisecond)
+		// scanner.Scan()
+		// msg := scanner.Text();
+		msg := string(movestr[r.Intn(4)])
 		var message message
-		switch msg := scanner.Text(); msg {
+		switch msg {
 		case "w", "a", "s", "d":
 			currentPos = move(msg, currentPos)
 			message = positionMessage{Type: "position", position: currentPos}
