@@ -106,7 +106,7 @@ export class Room {
     // } else if (obj.type === 'position') {
 
     // }
-    console.log(message);
+    // console.log(resp);
     this.sessions.filter((s) => s.uid !== uid).forEach((s) => s.ws.send(JSON.stringify(resp)));
   }
 }
