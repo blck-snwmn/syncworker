@@ -1,4 +1,6 @@
 # syncworker
+A sample for synchronizing location information using Cloudflare Workers and Durable Objects.
+
 ## Run
 worker
 ```bash
