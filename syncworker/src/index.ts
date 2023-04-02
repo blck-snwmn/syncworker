@@ -21,7 +21,7 @@ export default {
   ): Promise<Response> {
     const url = new URL(request.url);
     const ps = url.pathname.split("/");
-    if (ps.length !== 4 || ps[1] !== "room") {
+    if (ps.length !== 3 || ps[1] !== "room") {
       return new Response("Expected /room/:id", { status: 400 });
     }
     const roomID = ps[2];

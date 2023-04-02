@@ -41,7 +41,7 @@ func main() {
 	roomID := "myroom"
 	uid := uuid.NewString()
 	// WebSocket接続先のURLを指定します。
-	url := fmt.Sprintf("ws://localhost:8787/room/%s/?id=%s", roomID, uid)
+	url := fmt.Sprintf("ws://localhost:8787/room/%s?id=%s", roomID, uid)
 
 	// WebSocketのダイアル設定を作成します。
 	dialer := &websocket.Dialer{}
