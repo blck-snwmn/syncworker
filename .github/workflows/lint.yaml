@@ -20,6 +20,7 @@ jobs:
   eslint:
     permissions:
       pull-requests: write
+      contents: read
     uses: blck-snwmn/share-workflows/.github/workflows/reusable-eslint.yml@main
     with:
       working-directory: ./syncworker
