@@ -18,6 +18,8 @@ jobs:
           args: --enable=gosec
           working-directory: ./client
   eslint:
+    permissions:
+      pull-requests: write
     uses: blck-snwmn/share-workflows/.github/workflows/reusable-eslint.yml@main
     with:
       working-directory: ./syncworker
