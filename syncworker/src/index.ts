@@ -98,7 +98,9 @@ export class Room {
 
     const iid = setInterval(() => {
       try {
-        server.send(JSON.stringify(this.positions));
+        if (this.sessions.length > 1) {
+          server.send(JSON.stringify(this.positions));
+        }
       } catch (error) {
         console.log(error);
       }
