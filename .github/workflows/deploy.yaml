@@ -7,5 +7,7 @@ on:
 jobs:
   publish:
     uses: blck-snwmn/share-workflows/.github/workflows/reusable-cf-publish.yml@main
+    with:
+      working-directory: ./syncworker
     secrets:
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
