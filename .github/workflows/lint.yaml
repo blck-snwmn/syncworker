@@ -2,16 +2,17 @@ name: lint
 
 on:
   push:
+    branches-ignore:
+      - main
   pull_request:
 
 jobs:
-  golint:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+      - uses: blck-snwmn/share-workflows/go/setup@main
         with:
-          go-version-file: "./client/go.mod"
+          working-directory: ./client
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
