@@ -41,8 +41,9 @@ type message interface {
 func main() {
 	roomID := "myroom"
 	for i := 0; i < 200; i++ {
-		go do(roomID, strconv.Itoa(i))
+		go do(roomID, strconv.Itoa(i), false)
 	}
+	go do(roomID, "check", true)
 	select {}
 }
 
@@ -52,7 +53,7 @@ var (
 	maxM = big.NewInt(4)
 )
 
-func do(roomID, uid string) {
+func do(roomID, uid string, check bool) {
 	x, _ := rand.Int(rand.Reader, maxX)
 	y, _ := rand.Int(rand.Reader, maxY)
 
@@ -69,7 +70,7 @@ func do(roomID, uid string) {
 	}
 	defer conn.Close()
 
-	go readMsg(conn)
+	go readMsg(conn, check)
 
 	// scanner := bufio.NewScanner(os.Stdin)
 
@@ -78,8 +79,8 @@ func do(roomID, uid string) {
 	const movestr = "wasd"
 	for {
 		m, _ := rand.Int(rand.Reader, maxM)
-		// time.Sleep(125 * time.Millisecond)
-		time.Sleep(time.Second)
+		time.Sleep(125 * time.Millisecond)
+		// time.Sleep(time.Second)
 		// scanner.Scan()
 		// msg := scanner.Text();
 		msg := string(movestr[m.Int64()])
@@ -115,7 +116,8 @@ func move(key string, pos position) position {
 	}
 }
 
-func readMsg(conn *websocket.Conn) {
+func readMsg(conn *websocket.Conn, check bool) {
+	before := time.Now()
 	for {
 		// メッセージを受信します。
 		_, _, err := conn.ReadMessage()
@@ -123,7 +125,12 @@ func readMsg(conn *websocket.Conn) {
 			log.Println("Failed to receive message:", err)
 			return
 		}
-
+		if check {
+			current := time.Now()
+			diff := current.Sub(before)
+			fmt.Println(diff)
+			before = current
+		}
 		// 受信したメッセージを出力します。
 		// fmt.Printf("[received] %s\n", receivedMessage)
 	}
