@@ -45,16 +45,8 @@ interface Chat {
 
 type Message = Position | Chat;
 
-interface Session {
-  uid: string
-  ws: WebSocket
-  closed: boolean
-}
-
 export class Room {
   state: DurableObjectState;
-
-  sessions: Session[] = [];
 
   positions: Record<string, Position> = {};
 
@@ -82,9 +74,6 @@ export class Room {
 
     server.accept();
     const session = { uid, ws: server, closed: false };
-    this.sessions.push(session);
-
-    console.log(`connections=${this.sessions.length}`);
 
     server.addEventListener("message", (event) => {
       if (typeof event.data !== "string") {
@@ -98,7 +87,7 @@ export class Room {
 
     const iid = setInterval(() => {
       try {
-        if (this.sessions.length > 1) {
+        if (Object.keys(this.positions).length > 1) {
           server.send(JSON.stringify(this.positions));
         }
       } catch (error) {
@@ -109,7 +98,6 @@ export class Room {
     const f = () => {
       console.log("close");
       session.closed = true;
-      this.sessions = this.sessions.filter((s) => s.uid !== uid);
       delete this.positions[uid];
       clearInterval(iid);
     };
@@ -121,15 +109,6 @@ export class Room {
       status: 101,
       webSocket: client,
     });
-  }
-
-  broadcast(uid: string, message: string) {
-    const obj = JSON.parse(message) as Message;
-    const resp = { uid, ...obj };
-    this.sessions
-      .filter((s) => !s.closed)
-      .filter((s) => s.uid !== uid)
-      .forEach((s) => s.ws.send(JSON.stringify(resp)));
   }
 
   storePosition(uid: string, position: Position) {
