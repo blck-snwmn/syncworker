@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - syncworker/**
 jobs:
   publish:
     uses: blck-snwmn/share-workflows/.github/workflows/reusable-cf-publish.yml@main
