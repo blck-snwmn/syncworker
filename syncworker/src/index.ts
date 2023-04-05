@@ -104,7 +104,7 @@ export class Room {
       } catch (error) {
         console.log(error);
       }
-    }, 1000 / 10);
+    }, 1000 / 60);
 
     const f = () => {
       console.log("close");
