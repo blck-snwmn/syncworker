@@ -1,0 +1,13 @@
+name: go
+
+on:
+  pull_request:
+    paths:
+      - client/**
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: blck-snwmn/share-workflows/go/lint@main
+        with:
+          working-directory: ./client
