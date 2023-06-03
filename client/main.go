@@ -41,7 +41,7 @@ type message interface {
 func main() {
 	roomID := "myroom"
 	for i := 0; i < 200; i++ {
-		go do(roomID, strconv.Itoa(i), false)
+		go do(roomID, "xxxx"+strconv.Itoa(i), false)
 	}
 	go do(roomID, "check", true)
 	select {}
