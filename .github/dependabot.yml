@@ -9,11 +9,25 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+
   - package-ecosystem: "gomod"
     directory: "/client"
     schedule:
       interval: "daily"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+
   - package-ecosystem: "npm"
     directory: "/syncworker"
     schedule:
       interval: "daily"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
