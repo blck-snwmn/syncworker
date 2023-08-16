@@ -5,7 +5,7 @@
     "@cloudflare/workers-types": "^4.20230628.0",
     "typescript": "^5.1.6",
     "vitest": "^0.34.1",
-    "wrangler": "3.5.0",
+    "wrangler": "3.5.1",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
     "eslint": "^8.47.0",
