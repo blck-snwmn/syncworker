@@ -2,16 +2,11 @@
   "name": "syncworker",
   "version": "0.0.0",
   "devDependencies": {
+    "@biomejs/biome": "1.4.1",
     "@cloudflare/workers-types": "^4.20230628.0",
     "typescript": "^5.3.3",
     "vitest": "^1.1.1",
-    "wrangler": "3.22.1",
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "@typescript-eslint/parser": "^6.16.0",
-    "eslint": "^8.56.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^17.1.0",
-    "eslint-plugin-import": "^2.29.1"
+    "wrangler": "3.22.1"
   },
   "private": true,
   "scripts": {
