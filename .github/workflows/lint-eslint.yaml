@@ -6,9 +6,14 @@ on:
       - syncworker/**
 jobs:
   lint:
-    permissions:
-      pull-requests: write
-      contents: read
-    uses: blck-snwmn/share-workflows/.github/workflows/reusable-eslint.yml@main
-    with:
-      working-directory: ./syncworker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: check(lint, format)
+        run: npm run check
+        working-directory: ./syncworker
