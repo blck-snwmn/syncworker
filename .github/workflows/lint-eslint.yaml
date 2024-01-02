@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - syncworker/**
+      - .github/workflows/lint-eslint.yaml
 jobs:
   lint:
     runs-on: ubuntu-latest
