@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: ./syncworker/package-lock.json
       - run: npm ci
       - name: check(lint, format)
         run: npm run check
